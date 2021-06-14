@@ -1,0 +1,134 @@
+/* Base style */
+
+.button {
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: none;
+  border-radius: 6px;
+  gap: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button-label {
+  font-weight: 500;
+  color: #3a3a3c;
+  font-size: 14px;
+}
+
+.button-icon {
+  height: 16px;
+}
+
+/* Primary style */
+
+.button-primary {
+  background-color: #2075f5;
+  color: #fff;
+}
+
+.button-primary:hover {
+  background-color: #216ad6;
+}
+
+.button-primary .button-label {
+  color: #fff;
+}
+
+.button-primary .button-icon {
+  filter: brightness(109%);
+}
+
+.button-primary-transparent {
+  background: transparent;
+  color: #2075f5;
+}
+
+.button-primary-transparent .button-label {
+  color: #2075f5;
+}
+
+.button-primary-transparent .button-icon {
+  filter: invert(47%) sepia(79%) saturate(5504%) hue-rotate(206deg)
+    brightness(100%) contrast(93%);
+}
+
+/* Danger style */
+
+.button-danger {
+  background-color: rgb(209, 47, 47);
+}
+
+.button-danger .button-label {
+  color: #fff;
+}
+
+.button-danger .button-icon {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(156deg)
+    brightness(103%) contrast(103%);
+}
+
+/* Secondary style */
+
+.button-secondary {
+  background-color: #f5f5f5;
+}
+
+.button-secondary-transparent {
+  background: transparent;
+}
+
+/* Size styles */
+
+.button-large {
+  padding: 16px 32px;
+}
+
+.button-large-wide {
+  padding: 12px 32px;
+}
+
+.button-large-wide .button-label {
+  font-size: 18px;
+}
+
+.button-large-wide .button-icon {
+  height: 24px;
+}
+
+.button-medium {
+  padding: 8px 16px;
+}
+
+.button-large .button-icon {
+  height: 32px;
+}
+
+.button-large {
+  font-size: 18px;
+}
+
+.button-block {
+  width: 100%;
+  justify-content: center;
+}
+
+.button-large.button-circle {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.button-large.button-circle .button-icon {
+  height: 22px;
+}
+
+.button-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+}
