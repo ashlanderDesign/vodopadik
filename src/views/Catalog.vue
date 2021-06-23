@@ -51,19 +51,19 @@ export default {
   methods: {
     getProductsByCategory(category = null) {
       fetch(
-        "http://santechnika-aqua45.ru/web/api/products/by-category?id=" +
+        "https://santechnika-aqua45.ru/web/api/products/by-category?id=" +
           category
       )
         .then((res) => res.json())
         .then((data) => (this.products = data));
     },
     getProductsAll() {
-      fetch("http://santechnika-aqua45.ru/web/api/products")
+      fetch("https://santechnika-aqua45.ru/web/api/products")
         .then((res) => res.json())
         .then((data) => (this.products = data));
     },
     getCategoryName(id) {
-      fetch("http://santechnika-aqua45.ru/web/api/categories/name?id=" + id)
+      fetch("https://santechnika-aqua45.ru/web/api/categories/name?id=" + id)
         .then((res) => res.json())
         .then((data) => (this.categoryName = data[0].name));
     },

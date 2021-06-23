@@ -166,7 +166,7 @@ export default {
       this.isEditing = true;
     },
     save() {
-      fetch("http://santechnika-aqua45.ru/web/api/user/update", {
+      fetch("https://santechnika-aqua45.ru/web/api/user/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -191,7 +191,7 @@ export default {
         });
     },
     auth() {
-      fetch("http://santechnika-aqua45.ru/web/api/user/auth", {
+      fetch("https://santechnika-aqua45.ru/web/api/user/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -224,7 +224,7 @@ export default {
         });
     },
     getUserOrders(id) {
-      fetch("http://santechnika-aqua45.ru/web/api/order/by-user?id=" + id)
+      fetch("https://santechnika-aqua45.ru/web/api/order/by-user?id=" + id)
         .then((res) => res.json())
         .then((data) => {
           this.userOrders = data;
@@ -242,7 +242,7 @@ export default {
     },
     create() {
       console.log(this.register);
-      fetch("http://santechnika-aqua45.ru/web/api/user/register", {
+      fetch("https://santechnika-aqua45.ru/web/api/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

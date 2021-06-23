@@ -166,7 +166,7 @@ export default {
   },
   methods: {
     getCategories() {
-      fetch("http://santechnika-aqua45.ru/web/api/categories")
+      fetch("https://santechnika-aqua45.ru/web/api/categories")
         .then((res) => res.json())
         .then((data) => {
           this.prepareCategories(data);
@@ -175,7 +175,7 @@ export default {
     },
     searchProducts(string) {
       fetch(
-        "http://santechnika-aqua45.ru/web/api/products/search?search=" + string
+        "https://santechnika-aqua45.ru/web/api/products/search?search=" + string
       )
         .then((res) => res.json())
         .then((data) => (this.searchResults = data));
