@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     getProduct(id) {
-      fetch("http://localhost:8081/api/products/view?id=" + id)
+      fetch("http://santechnika-aqua45.ru/web/api/products/view?id=" + id)
         .then((res) => res.json())
         .then((data) => {
           this.product = data[0];
@@ -122,23 +122,25 @@ export default {
         });
     },
     getStockStores(id) {
-      fetch("http://localhost:8081/api/stock/store?id=" + id)
+      fetch("http://santechnika-aqua45.ru/web/api/stock/store?id=" + id)
         .then((res) => res.json())
         .then((data) => (this.stock.store = data[0].quantity));
     },
     getStock(id) {
-      fetch("http://localhost:8081/api/stock/warehouses?id=" + id)
+      fetch("http://santechnika-aqua45.ru/web/api/stock/warehouses?id=" + id)
         .then((res) => res.json())
         .then((data) => (this.stock.warehouses = data[0].quantity));
     },
     getRelated() {
       const string = this.product.related_products;
-      fetch("http://localhost:8081/api/products/related?ids=" + string)
+      fetch(
+        "http://santechnika-aqua45.ru/web/api/products/related?ids=" + string
+      )
         .then((res) => res.json())
         .then((data) => (this.related = data));
     },
     getReviews(id) {
-      fetch("http://localhost:8081/api/reviews/view?product=" + id)
+      fetch("http://santechnika-aqua45.ru/web/api/reviews/view?product=" + id)
         .then((res) => res.json())
         .then((data) => (this.reviews = data));
     },
@@ -147,7 +149,7 @@ export default {
       this.$store.commit("addToCart", product);
     },
     sendReview() {
-      fetch("http://localhost:8081/api/reviews/create", {
+      fetch("http://santechnika-aqua45.ru/web/api/reviews/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

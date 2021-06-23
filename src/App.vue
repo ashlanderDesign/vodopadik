@@ -166,7 +166,7 @@ export default {
   },
   methods: {
     getCategories() {
-      fetch("http://localhost:8081/api/categories")
+      fetch("http://santechnika-aqua45.ru/web/api/categories")
         .then((res) => res.json())
         .then((data) => {
           this.prepareCategories(data);
@@ -174,7 +174,9 @@ export default {
         });
     },
     searchProducts(string) {
-      fetch("http://localhost:8081/api/products/search?search=" + string)
+      fetch(
+        "http://santechnika-aqua45.ru/web/api/products/search?search=" + string
+      )
         .then((res) => res.json())
         .then((data) => (this.searchResults = data));
     },

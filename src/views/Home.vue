@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     getPopularCategories() {
-      fetch("http://localhost:8081/api/categories")
+      fetch("http://santechnika-aqua45.ru/web/api/categories")
         .then((res) => res.json())
         .then((data) => {
           console.log(data.slice(0, 6));
