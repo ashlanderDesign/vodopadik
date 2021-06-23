@@ -27,10 +27,20 @@
 .button-primary {
   background-color: #2075f5;
   color: #fff;
+  &:disabled {
+    background-color: #5975a0;
+    color: rgb(128, 128, 128);
+    .button-label {
+      color: rgb(128, 128, 128);
+    }
+  }
 }
 
 .button-primary:hover {
   background-color: #216ad6;
+  &:disabled {
+    background-color: #5975a0;
+  }
 }
 
 .button-primary .button-label {
