@@ -1,12 +1,19 @@
 <template>
   <main class="wrapper">
     <aside class="side-block">
-      <div class="block">
-        <div class="title">Подпишись на наши обновления!</div>
-        <input type="text" placeholder="Ваш email" />
-        <button class="button button-primary button-block button-large">
+      <div class="block" v-show="showSubscribe">
+        <div class="title" v-show="!isSubscribed">
+          Подпишись на наши обновления!
+        </div>
+        <input type="text" placeholder="Ваш email" v-show="!isSubscribed" />
+        <button
+          class="button button-primary button-block button-large"
+          v-show="!isSubscribed"
+          @click="subscribe()"
+        >
           <span class="button-label">Подписаться</span>
         </button>
+        <h3 v-show="isSubscribed">Спасибо за подписку!</h3>
       </div>
       <div class="block">
         <div class="title">Популярные категории</div>
@@ -24,62 +31,29 @@
       </div>
       <h1 class="title">Рекомендуем Вам</h1>
       <div class="cards-recommend">
-        <div class="card">
-          <img src="/products/345.jpg" alt="" class="card-image" />
+        <div class="card" v-for="product in recommended" :key="product.id">
+          <img :src="`/products/${product.id}.jpg`" alt="" class="card-image" />
           <div class="card-body">
-            <h3 class="card-header">Канал круглый 1,0 м D125 ФЛЕКС</h3>
-            <span class="card-stock card-stock-green">В наличии</span>
+            <router-link
+              :to="`/product?id=${product.id}`"
+              class="card-header"
+              >{{ product.name }}</router-link
+            >
           </div>
           <div class="card-footer">
-            <button class="button button-large button-block button-primary">
-              Купить
+            <button
+              :class="[
+                'button',
+                'button-large',
+                'button-block',
+                !inCart(product) && 'button-primary',
+                inCart(product) && 'button-secondary',
+              ]"
+              @click="addToCart(product)"
+            >
+              {{ inCart(product) ? "В корзине" : "Купить" }}
             </button>
-            <span class="card-price">1400 ₽</span>
-          </div>
-        </div>
-        <div class="card">
-          <img src="/products/255.jpg" alt="" class="card-image" />
-          <div class="card-body">
-            <h3 class="card-header">
-              Колено разноугловое горизонтальное 60х120 ФЛЕКС
-            </h3>
-            <span class="card-stock card-stock-green">В наличии</span>
-          </div>
-          <div class="card-footer">
-            <button class="button button-large button-block button-primary">
-              Купить
-            </button>
-            <span class="card-price">1400 ₽</span>
-          </div>
-        </div>
-        <div class="card">
-          <img src="/products/94.jpg" alt="" class="card-image" />
-          <div class="card-body">
-            <h3 class="card-header">
-              Сифон 1 1,2х40 Ani Грот с гофрой 40х40х50 А0115 АНИ пласт
-            </h3>
-            <span class="card-stock card-stock-green">В наличии</span>
-          </div>
-          <div class="card-footer">
-            <button class="button button-large button-block button-primary">
-              Купить
-            </button>
-            <span class="card-price">1400 ₽</span>
-          </div>
-        </div>
-        <div class="card">
-          <img src="/products/582.jpg" alt="" class="card-image" />
-          <div class="card-body">
-            <h3 class="card-header">
-              Сифон 1 1,2х40 А220 с гофрой 40х40х50 UNICORN
-            </h3>
-            <span class="card-stock card-stock-green">В наличии</span>
-          </div>
-          <div class="card-footer">
-            <button class="button button-large button-block button-primary">
-              Купить
-            </button>
-            <span class="card-price">1400 ₽</span>
+            <span class="card-price">{{ product.price }} ₽</span>
           </div>
         </div>
       </div>
@@ -93,9 +67,21 @@ export default {
   data: () => {
     return {
       popularCategories: [],
+      recommended: [],
+      showSubscribe: true,
+      isSubscribed: false,
     };
   },
   methods: {
+    addToCart(product) {
+      this.$store.commit("addToCart", product);
+    },
+    subscribe() {
+      this.isSubscribed = true;
+      setTimeout(() => {
+        this.showSubscribe = false;
+      }, 1500);
+    },
     getPopularCategories() {
       fetch("https://santechnika-aqua45.ru/web/api/categories")
         .then((res) => res.json())
@@ -106,9 +92,38 @@ export default {
           });
         });
     },
+    random(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min)) + min;
+    },
+    getRandomProducts() {
+      const array = [
+        this.random(1, 500),
+        this.random(1, 500),
+        this.random(1, 500),
+        this.random(1, 500),
+      ];
+      fetch(
+        "https://santechnika-aqua45.ru/web/api/products/related?ids=" +
+          array.join(",")
+      )
+        .then((res) => res.json())
+        .then((data) => (this.recommended = data));
+    },
+    inCart(product) {
+      const cart = this.$store.state.cart;
+
+      if (cart.length > 0) {
+        const filtered = cart.filter((x) => x.id == product.id);
+        return filtered.length > 0;
+      }
+      return false;
+    },
   },
   mounted() {
     this.getPopularCategories();
+    this.getRandomProducts();
   },
 };
 </script>
@@ -258,6 +273,8 @@ export default {
   font-size: 18px;
   line-height: 20px;
   cursor: pointer;
+  color: #000;
+  text-decoration: none;
 }
 
 .card-header:hover {
