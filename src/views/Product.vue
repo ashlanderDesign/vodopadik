@@ -13,10 +13,10 @@
             <div class="product-price">
               <span class="price">{{ product.price }} ₽</span>
               <button
-                class="button button-large button-primary"
-                @click="addToCart(reprod)"
+                :class="['button', 'button-large', !inCart(product) && 'button-primary', inCart(product) && 'button-secondary']"
+                @click="addToCart(product)"
               >
-                <span class="button-label">Купить</span>
+                <span class="button-label">{{ inCart(product) ? "В корзине" : "Купить" }}</span>
               </button>
             </div>
           </div>
@@ -52,10 +52,10 @@
           <div class="info-price">
             <span class="price">{{ reprod.price }} ₽</span>
             <button
-              class="button button-block button-primary"
+              :class="['button', 'button-block', !inCart(reprod) && 'button-primary', inCart(reprod) && 'button-secondary']"
               @click="addToCart(reprod)"
             >
-              Купить
+              {{ inCart(reprod) ? "В корзине" : "Купить" }}
             </button>
           </div>
         </div>
@@ -170,6 +170,18 @@ export default {
           }
         });
     },
+    inCart(product) {
+      const cart = this.$store.state.cart;
+
+      if (cart.length > 0) {
+        const filtered = cart.filter((x) => x.id == product.id);
+        return filtered.length > 0;
+      }
+      return false;
+    }
+  },
+  computed: {
+    
   },
   mounted() {
     const query = this.$router.history.current.query;

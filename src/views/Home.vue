@@ -102,7 +102,7 @@ export default {
         .then((data) => {
           console.log(data.slice(0, 6));
           this.popularCategories = data.filter((x) => {
-            return x.id < 7;
+            return x.id > 7 && x.id < 14;
           });
         });
     },

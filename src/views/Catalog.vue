@@ -27,10 +27,10 @@
         </div>
         <div class="card-footer">
           <button
-            class="button button-large button-block button-primary"
+            :class="['button', 'button-large', 'button-block', !inCart(product) && 'button-primary', inCart(product) && 'button-secondary']"
             @click="addToCart(product)"
           >
-            Купить
+            {{ inCart(product) ? "В корзине" : "Купить" }}
           </button>
           <span class="card-price">{{ product.price }} ₽</span>
         </div>
@@ -70,6 +70,15 @@ export default {
     addToCart(product) {
       this.$store.commit("addToCart", product);
     },
+    inCart(product) {
+      const cart = this.$store.state.cart;
+
+      if (cart.length > 0) {
+        const filtered = cart.filter((x) => x.id == product.id);
+        return filtered.length > 0;
+      }
+      return false;
+    }
   },
   created() {
     const query = this.$router.history.current.query;
@@ -157,6 +166,16 @@ export default {
     "more more more more";
   gap: 12px;
   margin-left: 16px;
+
+  @media screen and (max-width: 1600px) {
+    grid-template-columns: repeat(3, 3fr);
+  grid-template-rows: 0.1fr 1fr 1fr 0.1fr;
+  grid-template-areas:
+    "title title title"
+    ". . . "
+    ". . . "
+    "more more more";
+  }
 }
 
 .cards .more {

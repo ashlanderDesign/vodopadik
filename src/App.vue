@@ -9,38 +9,8 @@
         <div class="header-top-right">
           <a href="#top">Адрес магазина</a>
           <router-link to="/account" href="#top" id="login-button"
-            >Личный кабинет</router-link
+            >Личный кабинет {{ getUsername ? `(${getUsername})` : "" }}</router-link
           >
-        </div>
-        <div id="loginForm" class="header-login-form hidden">
-          <h4 class="header-login-form-title">Войти или зарегистрироваться</h4>
-          <input type="text" placeholder="Имя пользователя" />
-          <input type="password" placeholder="Пароль" />
-          <button class="button button-primary button-block button-medium">
-            Войти
-          </button>
-          <button
-            id="registerButton"
-            class="button button-secondary button-block button-medium"
-          >
-            Зарегистрироваться
-          </button>
-        </div>
-        <div id="registerForm" class="header-login-form hidden">
-          <h4 class="header-login-form-title">Регистрация</h4>
-          <input type="text" placeholder="Имя пользователя" />
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Пароль" />
-          <input type="password" placeholder="Повторите пароль" />
-          <button class="button button-primary button-block button-medium">
-            Зарегистрироваться
-          </button>
-          <button
-            id="haveAccountButton"
-            class="button button-secondary button-block button-medium"
-          >
-            У меня уже есть аккаунт
-          </button>
         </div>
       </div>
       <div class="header-mid">
@@ -92,7 +62,7 @@
           <div class="cart-footer">
             <button
               class="button button-block button-large button-primary"
-              @click="$router.push('/order')"
+              @click="$router.push('/order'); cartShow = false"
             >
               <span class="button-label">Оформить заказ</span>
             </button>
@@ -163,6 +133,23 @@ export default {
       catalogShow: false,
       cartShow: false,
     };
+  },
+  computed: {
+    getUsername() {
+      const user = this.$store.state.user;
+      if (user.isLogged) {
+        console.log(user.username, user.name)
+        if (user.name != undefined) {
+          return user.name
+        }
+        if (user.username != undefined) {
+          return user.username;
+        }
+        return false;
+      }
+
+      return false
+    }
   },
   methods: {
     getCategories() {
@@ -434,6 +421,7 @@ export default {
   font-size: 24px;
   color: #000;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .header-cart {

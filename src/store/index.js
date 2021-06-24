@@ -15,7 +15,7 @@ export default new Vuex.Store({
       surname: null,
       phone: null
     },
-    cart: [{"id":2,"name":"Круг отрезной по металлу Д14А 115х2, 5х22 ","unit":"5","description":"Круги отрезные по металлу можно использовать для резки метериалов из стали, цветных металлов и их сплавов.","price":31.77,"category_id":22,"image":"2.jpg","related_products":null,"quantity":6},{"id":3,"name":"Круг отрезной по металлу Д14А 115х2х22 ","unit":"4","description":"Круги отрезные по металлу можно использовать для резки метериалов из стали, цветных металлов и их сплавов.","price":30.59,"category_id":22,"image":"3.jpg","related_products":null,"quantity":5},{"id":4,"name":"Круг отрезной по металлу Д14А 125х2, 5х22 ","unit":"3","description":"Круги отрезные по металлу можно использовать для резки метериалов из стали, цветных металлов и их сплавов.","price":20.15,"category_id":22,"image":"4.jpg","related_products":null,"quantity":1},{"id":1,"name":"Круг отрезной по металлу Д14А 115х1х22 ","unit":"7","description":"Круги отрезные по металлу можно использовать для резки метериалов из стали, цветных металлов и их сплавов.","price":24.11,"category_id":22,"image":"1.jpg","related_products":null,"quantity":1}]
+    cart: []
   },
   mutations: {
     setCategories(context, payload) {
