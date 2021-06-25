@@ -166,6 +166,7 @@ export default {
       this.isEditing = true;
     },
     save() {
+      const user = this.$store.state.user;
       fetch("https://santechnika-aqua45.ru/web/api/user/update", {
         method: "POST",
         headers: {
@@ -173,7 +174,7 @@ export default {
         },
         body: JSON.stringify({
           ...this.user,
-          token: this.$store.state.user.token,
+          id: user.id,
         }),
       })
         .then((res) => res.json())
