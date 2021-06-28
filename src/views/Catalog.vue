@@ -4,20 +4,25 @@
       <span class="title">Фильтры</span>
       <div class="filters-row-title">Цена</div>
       <div class="filters-row">
-        <input type="number" placeholder="От" />
-        <input type="number" placeholder="До" />
+        <input v-model="filters.priceFrom" type="number" placeholder="От" />
+        <input v-model="filters.priceTo" type="number" placeholder="До" />
       </div>
-      <button class="button button-large button-block button-primary">
+      <button
+        class="button button-large button-block button-primary"
+        @click="getFiltered(categoryId)"
+      >
         <span class="button-label">Применить</span>
       </button>
     </aside>
-    <section class="cards" id="water">
+    <section class="cards">
       <div class="title">
         <h1>{{ categoryName }}</h1>
-        <button class="button button-primary-transparent">
-          <span class="button-title">Цена</span>
-        </button>
       </div>
+      <button
+        class="button button-large button-block button-primary filters-button"
+      >
+        <div class="button-label">Фильтры</div>
+      </button>
       <div class="card" v-for="product in products" :key="product.id">
         <img :src="`/products/${product.id}.jpg`" alt="" class="card-image" />
         <div class="card-body">
@@ -27,7 +32,13 @@
         </div>
         <div class="card-footer">
           <button
-            :class="['button', 'button-large', 'button-block', !inCart(product) && 'button-primary', inCart(product) && 'button-secondary']"
+            :class="[
+              'button',
+              'button-large',
+              'button-block',
+              !inCart(product) && 'button-primary',
+              inCart(product) && 'button-secondary',
+            ]"
             @click="addToCart(product)"
           >
             {{ inCart(product) ? "В корзине" : "Купить" }}
@@ -45,7 +56,12 @@ export default {
   data: () => {
     return {
       products: [],
+      categoryId: null,
       categoryName: "",
+      filters: {
+        priceFrom: "",
+        priceTo: "",
+      },
     };
   },
   methods: {
@@ -65,7 +81,21 @@ export default {
     getCategoryName(id) {
       fetch("https://santechnika-aqua45.ru/web/api/categories/name?id=" + id)
         .then((res) => res.json())
-        .then((data) => (this.categoryName = data[0].name));
+        .then((data) => {
+          this.categoryName = data[0].name;
+          document.title = data[0].name;
+        });
+    },
+    getFiltered(category = null) {
+      fetch(
+        category
+          ? `https://santechnika-aqua45.ru/web/api/products/by-category?id=${category}&priceFrom=${this.filters.priceFrom}&priceTo=${this.filters.priceTo}`
+          : `https://santechnika-aqua45.ru/web/api/products?priceFrom=${this.filters.priceFrom}&priceTo=${this.filters.priceTo}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          this.products = data;
+        });
     },
     addToCart(product) {
       this.$store.commit("addToCart", product);
@@ -78,16 +108,34 @@ export default {
         return filtered.length > 0;
       }
       return false;
-    }
+    },
   },
-  created() {
+  mounted() {
     const query = this.$router.history.current.query;
     if (query.id != undefined) {
-      this.getProductsByCategory(query.id);
       this.getCategoryName(query.id);
+      this.categoryId = query.id;
+
+      if (query.priceFrom != undefined) {
+        this.filters.priceFrom = query.priceFrom;
+        this.getFiltered(query.id);
+      } else if (query.priceTo != undefined) {
+        this.filters.priceTo = query.priceTo;
+        this.getFiltered(query.id);
+      } else {
+        this.getProductsByCategory(query.id);
+      }
     } else {
       this.categoryName = "Каталог";
-      this.getProductsAll();
+      if (query.priceFrom != undefined) {
+        this.filters.priceFrom = query.priceFrom;
+        this.getFiltered();
+      } else if (query.priceTo != undefined) {
+        this.filters.priceTo = query.priceTo;
+        this.getFiltered();
+      } else {
+        this.getProductsAll();
+      }
     }
   },
 };
@@ -100,6 +148,11 @@ export default {
   padding: 32px 40px;
   align-items: flex-start;
   justify-content: space-between;
+  @media screen and (max-width: 1000px) {
+    padding: 32px 8px;
+    justify-content: center;
+    overflow: hidden;
+  }
 }
 
 .filters {
@@ -113,6 +166,10 @@ export default {
   justify-content: flex-start;
   flex-direction: column;
   min-width: 20%;
+
+  @media screen and (max-width: 1000px) {
+    display: none;
+  }
 
   .title {
     font-weight: 600;
@@ -155,6 +212,14 @@ export default {
   }
 }
 
+.filters-button {
+  grid-area: filters;
+  display: none;
+  @media screen and (max-width: 1000px) {
+    display: flex;
+  }
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 4fr);
@@ -169,12 +234,25 @@ export default {
 
   @media screen and (max-width: 1600px) {
     grid-template-columns: repeat(3, 3fr);
-  grid-template-rows: 0.1fr 1fr 1fr 0.1fr;
-  grid-template-areas:
-    "title title title"
-    ". . . "
-    ". . . "
-    "more more more";
+    grid-template-rows: 0.1fr 1fr 1fr 0.1fr;
+    grid-template-areas:
+      "title title title"
+      ". . . "
+      ". . . "
+      "more more more";
+  }
+
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.1fr 0.1fr 1fr 1fr 0.1fr;
+    grid-template-areas:
+      "title"
+      "filters"
+      "."
+      "."
+      "more";
+    width: 100%;
+    margin-left: 0;
   }
 }
 
@@ -197,6 +275,9 @@ export default {
   padding: 16px 32px;
   border-radius: 4px;
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.14);
+  @media screen and (max-width: 1000px) {
+    font-size: 16px;
+  }
 }
 
 .card {

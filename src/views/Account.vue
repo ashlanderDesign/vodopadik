@@ -288,6 +288,9 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  @media screen and (max-width: 1000px) {
+    padding: 16px 8px;
+  }
 }
 
 .header-controlls {
@@ -295,6 +298,11 @@ export default {
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  @media screen and (max-width: 1000px) {
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 16px;
+  }
 }
 
 .message {
@@ -312,6 +320,11 @@ export default {
   border-radius: 16px;
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.14);
   padding: 32px;
+
+  @media screen and (max-width: 1000px) {
+    width: 100%;
+    padding: 16px;
+  }
 
   .orders {
     display: flex;
@@ -338,6 +351,9 @@ export default {
     align-items: center;
     justify-content: flex-start;
     padding: 16px 0;
+    @media screen and (max-width: 1000px) {
+      flex-direction: column;
+    }
 
     input {
       background-color: #ebebeb;
@@ -346,6 +362,10 @@ export default {
       border: none;
       outline: none;
       margin: 0px 16px;
+
+      @media screen and (max-width: 1000px) {
+        margin: 16px 0;
+      }
     }
   }
 
@@ -374,6 +394,10 @@ export default {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 32px;
+
+    @media screen and (max-width: 1000px) {
+      flex-direction: column-reverse;
+    }
 
     .user {
       font-weight: 500;

@@ -57,10 +57,11 @@ export default new Vuex.Store({
       const filtered = context.cart.filter((x) => x.id === payload.id);
       console.log(filtered, payload)
       if(filtered.length === 0) {
-        context.cart.push({...payload, quantity: 1})
+        context.cart.push({...payload, quantity: 1, total: payload.price})
       } else {
         const index = context.cart.indexOf(filtered[0]);
         context.cart[index].quantity += 1
+        context.cart[index].total = context.cart[index].quantity * context.cart[index].price
       }
     }
   },

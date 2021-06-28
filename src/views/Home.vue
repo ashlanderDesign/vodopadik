@@ -88,7 +88,7 @@ export default {
         .then((data) => {
           console.log(data.slice(0, 6));
           this.popularCategories = data.filter((x) => {
-            return x.id > 7 && x.id < 14;
+            return x.id >= 59 && x.id <= 66;
           });
         });
     },
@@ -137,6 +137,11 @@ export default {
   justify-content: space-between;
   padding: 32px 40px;
   width: 100%;
+
+  @media screen and (max-width: 1000px) {
+    padding: 32px 8px;
+    flex-direction: column-reverse;
+  }
 }
 
 .side-block {
@@ -192,6 +197,10 @@ export default {
   grid-template-columns: repeat(4, 4fr);
   grid-template-rows: repeat(1, 1fr);
   gap: 16px;
+
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .banner {
@@ -208,12 +217,19 @@ export default {
   gap: 16px;
   padding: 32px 150px;
   color: #fff;
+  @media screen and (max-width: 1000px) {
+    padding: 32px 64px;
+  }
 }
 
 .banner h2 {
   color: #fff;
   font-size: 56px;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+
+  @media screen and (max-width: 1000px) {
+    font-size: 16px;
+  }
 }
 
 .landing {
@@ -222,6 +238,16 @@ export default {
   grid-template-rows: 2fr 0.5fr 4fr;
   gap: 32px;
   margin-left: 32px;
+
+  @media screen and (max-width: 1000px) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    margin-left: 0;
+    width: 100%;
+    margin-bottom: 32px;
+  }
 }
 
 .card {

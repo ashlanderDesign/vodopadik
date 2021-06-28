@@ -13,10 +13,17 @@
             <div class="product-price">
               <span class="price">{{ product.price }} ₽</span>
               <button
-                :class="['button', 'button-large', !inCart(product) && 'button-primary', inCart(product) && 'button-secondary']"
+                :class="[
+                  'button',
+                  'button-large',
+                  !inCart(product) && 'button-primary',
+                  inCart(product) && 'button-secondary',
+                ]"
                 @click="addToCart(product)"
               >
-                <span class="button-label">{{ inCart(product) ? "В корзине" : "Купить" }}</span>
+                <span class="button-label">{{
+                  inCart(product) ? "В корзине" : "Купить"
+                }}</span>
               </button>
             </div>
           </div>
@@ -39,11 +46,24 @@
         </div>
       </div>
     </div>
-    <h3 class="description-title">
+    <h3 class="description-title" v-show="related.length > 0">
       Для установки данного товара Вам может понадобиться:
     </h3>
     <div class="related-products">
       <div class="mini-card" v-for="reprod in related" :key="reprod.id">
+        <button
+          :class="[
+            'alreadyHave',
+            installProducts.indexOf(reprod) > -1 ? 'unactive' : 'active',
+          ]"
+          @click="
+            installProducts.indexOf(reprod) > -1
+              ? removeFromInstall(reprod)
+              : addToInstall(reprod)
+          "
+        >
+          Уже есть
+        </button>
         <img :src="`/products/${reprod.id}.jpg`" alt="" class="card-image" />
         <div class="card-info">
           <router-link :to="`/product?id=${reprod.id}`" class="info-title">{{
@@ -52,7 +72,12 @@
           <div class="info-price">
             <span class="price">{{ reprod.price }} ₽</span>
             <button
-              :class="['button', 'button-block', !inCart(reprod) && 'button-primary', inCart(reprod) && 'button-secondary']"
+              :class="[
+                'button',
+                'button-block',
+                !inCart(reprod) && 'button-primary',
+                inCart(reprod) && 'button-secondary',
+              ]"
               @click="addToCart(reprod)"
             >
               {{ inCart(reprod) ? "В корзине" : "Купить" }}
@@ -60,6 +85,32 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="installation">
+      <h3 class="description-title">
+        Средняя стоимость установки данного товара:
+      </h3>
+      <div class="delivery">
+        <input type="checkbox" v-model="calcNeedDelivery" id="isDelivery" />
+        <label for="isDelivery">Нужна доставка</label>
+      </div>
+      <div class="calculations">
+        <div class="row" v-show="installProducts.length > 0">
+          {{ installProducts.length }} товаров на общую сумму до
+          {{ totalOfRelated }} +
+        </div>
+        <div class="row">
+          499 ₽ (стоимость найма мастера по установке)
+          {{ calcNeedDelivery ? "+" : "" }}
+        </div>
+        <div class="row" v-show="calcNeedDelivery">
+          299 ₽ (стоимость доставки)
+        </div>
+      </div>
+      <div class="divider"></div>
+      <span class="calc-total"
+        >Итого: {{ parseFloat(totalInstall).toFixed(0) }} ₽</span
+      >
     </div>
     <div class="product-reviews">
       <div class="reviews-header">
@@ -100,10 +151,12 @@ export default {
       product: {},
       related: [],
       reviews: [],
+      installProducts: [],
       stock: {
         store: 0,
         warehouses: 0,
       },
+      calcNeedDelivery: false,
       review: {
         body: "",
         create_date: new Date(),
@@ -119,6 +172,7 @@ export default {
           this.product = data[0];
           this.getRelated();
           this.getReviews(data[0].id);
+          document.title = data[0].name;
         });
     },
     getStockStores(id) {
@@ -137,12 +191,26 @@ export default {
         "https://santechnika-aqua45.ru/web/api/products/related?ids=" + string
       )
         .then((res) => res.json())
-        .then((data) => (this.related = data));
+        .then((data) => {
+          this.related = data;
+          this.installProducts = [...data];
+        });
     },
     getReviews(id) {
       fetch("https://santechnika-aqua45.ru/web/api/reviews/view?product=" + id)
         .then((res) => res.json())
         .then((data) => (this.reviews = data));
+    },
+    addToInstall(product) {
+      this.installProducts.push(product);
+      console.log(this.installProducts, this.related);
+    },
+    removeFromInstall(product) {
+      const index = this.installProducts.indexOf(product);
+      if (index > -1) {
+        this.installProducts.splice(index, 1);
+        console.log(this.installProducts, this.related);
+      }
     },
     getUserById() {},
     addToCart(product) {
@@ -178,10 +246,37 @@ export default {
         return filtered.length > 0;
       }
       return false;
-    }
+    },
   },
   computed: {
-    
+    totalOfRelated() {
+      let total = 0;
+
+      this.installProducts.map((item) => {
+        total += item.price;
+      });
+
+      return parseFloat(total).toFixed(2);
+    },
+    totalInstall() {
+      const deliveryCost = 299;
+      const masterCost = 499;
+      const relatedTotal = this.totalOfRelated;
+
+      if (relatedTotal != 0 && this.calcNeedDelivery) {
+        return Number(deliveryCost) + Number(masterCost) + Number(relatedTotal);
+      }
+      if (relatedTotal != 0 && !this.calcNeedDelivery) {
+        return Number(masterCost) + Number(relatedTotal);
+      }
+      if (relatedTotal == 0 && this.calcNeedDelivery) {
+        return Number(deliveryCost) + Number(masterCost);
+      }
+      if (relatedTotal == 0 && !this.calcNeedDelivery) {
+        return Number(masterCost);
+      }
+      return Number(masterCost);
+    },
   },
   mounted() {
     const query = this.$router.history.current.query;
@@ -200,6 +295,67 @@ export default {
   min-height: 90vh;
   border-radius: 16px;
   padding: 32px;
+  @media screen and (max-width: 1000px) {
+    padding: 8px;
+  }
+}
+
+.installation {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 30%;
+  @media screen and (max-width: 1000px) {
+    width: 100%;
+  }
+  background-color: #ebebeb;
+  padding: 32px;
+  border-radius: 16px;
+  margin: 32px 0;
+
+  .delivery {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 18px;
+    cursor: pointer;
+
+    input {
+      margin-right: 8px;
+    }
+  }
+
+  .calculations {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 24px;
+    width: 100%;
+    flex-direction: column;
+
+    .row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 16px;
+    }
+  }
+
+  .divider {
+    height: 4px;
+    width: 60%;
+    background-color: #000;
+    margin: 16px 0;
+    border-radius: 16px;
+  }
+
+  .calc-total {
+    font-size: 32px;
+    font-weight: 700;
+  }
 }
 
 .reviews-list {
@@ -264,6 +420,9 @@ export default {
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
+  @media screen and (max-width: 1000px) {
+    flex-direction: column;
+  }
   margin-bottom: 64px;
 }
 
@@ -295,6 +454,26 @@ export default {
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.14);
   margin-bottom: 16px;
   margin-right: 32px;
+  position: relative;
+
+  .alreadyHave {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    &.unactive {
+      background-color: #ebebeb;
+    }
+
+    &.active {
+      background-color: #24daac;
+    }
+  }
 
   .card-info {
     display: flex;
@@ -335,14 +514,23 @@ export default {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  @media screen and (max-width: 1000px) {
+    flex-direction: column;
+  }
   width: 100%;
 
   .left {
     width: 50%;
+    @media screen and (max-width: 1000px) {
+      width: 100%;
+    }
   }
 
   .right {
     width: 30%;
+    @media screen and (max-width: 1000px) {
+      width: 100%;
+    }
     margin-right: 16px;
 
     .availability {
@@ -401,6 +589,10 @@ export default {
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 16px;
+  @media screen and (max-width: 1000px) {
+    font-size: 18px;
+    margin-top: 16px;
+  }
 }
 
 .reviews-header span {
@@ -412,6 +604,10 @@ export default {
 
 .product-info {
   width: 70%;
+  @media screen and (max-width: 1000px) {
+    width: 100%;
+    padding: 16px;
+  }
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -426,6 +622,10 @@ export default {
   font-weight: 400;
   font-size: 24px;
   line-height: 32px;
+  @media screen and (max-width: 1000px) {
+    font-size: 16px;
+    line-height: 16px;
+  }
 }
 
 .product-price {
@@ -436,12 +636,21 @@ export default {
   border-radius: 8px;
   background-color: #ebebeb;
   margin-bottom: 64px;
+  @media screen and (max-width: 1000px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .product-price .price {
   font-size: 34px;
   font-weight: 500;
   margin-right: 16px;
+  white-space: nowrap;
+
+  @media screen and (max-width: 1000px) {
+    font-size: 24px;
+  }
 }
 
 .product-price .discount {
@@ -480,6 +689,13 @@ export default {
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.14);
   overflow: hidden;
 
+  @media screen and (max-width: 1000px) {
+    width: 100%;
+    height: auto;
+    margin-right: 0;
+    margin-bottom: 32px;
+  }
+
   img {
     width: 100%;
     height: 100%;
@@ -490,5 +706,8 @@ export default {
   font-weight: 700;
   font-size: 34px;
   margin-bottom: 32px;
+  @media screen and (max-width: 1000px) {
+    font-size: 18px;
+  }
 }
 </style>

@@ -1,16 +1,103 @@
 <template>
   <div id="app">
+    <nav class="mobile-nav-panel" v-show="mobileNavShow">
+      <span
+        class="close"
+        @click="
+          mobileNavShow = false;
+          openMobileCategory(categories);
+        "
+        >Закрыть</span
+      >
+      <div class="search search-fluid">
+        <input
+          type="text"
+          placeholder="Поиск по каталогу..."
+          class="header-search"
+          v-model="mobileSearch"
+        />
+        <button class="button button-circle button-large button-primary">
+          <img class="button-icon" src="/img/search_icon.svg" alt="" />
+        </button>
+      </div>
+      <div class="catalogue" v-show="mobileCatalogue.length > 0">
+        <div
+          class="item"
+          v-for="category in mobileCatalogue"
+          @click="openMobileCategory(category.children)"
+          :key="category.id"
+        >
+          <span v-if="category.parent == null">{{ category.name }}</span>
+          <router-link
+            v-if="category.parent != null"
+            :to="'catalog?id=' + category.id"
+            @click.native="
+              mobileNavShow = false;
+              openMobileCategory(categories);
+            "
+          >
+            {{ category.name }}
+          </router-link>
+          <img src="/img/chevron_right.svg" alt="" />
+        </div>
+      </div>
+    </nav>
     <header class="header-wrapper">
       <div class="header-top">
-        <button class="button button-primary-transparent">
-          <img src="/img/navigation_arrow.svg" alt="" class="button-icon" />
-          <span class="button-label">Курган</span>
-        </button>
+        <a href="https://yandex.ru/maps/-/CCUemDT4cB" target="_blank">
+          <button class="button button-primary-transparent">
+            <img src="/img/navigation_arrow.svg" alt="" class="button-icon" />
+            <span class="button-label">Курган</span>
+          </button>
+        </a>
         <div class="header-top-right">
-          <a href="#top">Адрес магазина</a>
-          <router-link to="/account" href="#top" id="login-button"
-            >Личный кабинет {{ getUsername ? `(${getUsername})` : "" }}</router-link
+          <a href="https://yandex.ru/maps/-/CCUemDT4cB" target="_blank"
+            >Адрес магазина</a
           >
+          <router-link to="/account" href="#top" id="login-button"
+            >Личный кабинет
+            {{ getUsername ? `(${getUsername})` : "" }}</router-link
+          >
+        </div>
+      </div>
+      <div class="menu-mobile">
+        <router-link to="/"
+          ><img src="/img/logo_akva.jpg" alt="" class="header-logo"
+        /></router-link>
+        <img
+          src="/img/cart_icon.svg"
+          @click="cartShow = !cartShow"
+          alt=""
+          class="button-icon"
+        />
+        <a href="tel:88002348808"><img src="/img/phone_icon.svg" alt="" /></a>
+        <img
+          src="/img/hamburger_icon.svg"
+          alt=""
+          class="menu-button"
+          @click="mobileNavShow = true"
+        />
+        <div class="cart mobile" v-show="cartShow">
+          <h2>Ваша корзина:</h2>
+          <div
+            class="cart-item"
+            v-for="item in $store.state.cart"
+            :key="item.id"
+          >
+            <span class="item-name">{{ item.name }}</span>
+            <span class="quantity">{{ item.quantity }} шт</span>
+          </div>
+          <div class="cart-footer">
+            <button
+              class="button button-block button-large button-primary"
+              @click="
+                $router.push('/order');
+                cartShow = false;
+              "
+            >
+              <span class="button-label">Оформить заказ</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="header-mid">
@@ -62,7 +149,10 @@
           <div class="cart-footer">
             <button
               class="button button-block button-large button-primary"
-              @click="$router.push('/order'); cartShow = false"
+              @click="
+                $router.push('/order');
+                cartShow = false;
+              "
             >
               <span class="button-label">Оформить заказ</span>
             </button>
@@ -80,8 +170,9 @@
         </button>
         <router-link to="/sale" href="">Акции</router-link
         ><router-link to="/delivery" href="">Доставка и самовывоз</router-link
-        ><a href="">Установка</a><a href="">Вакансии</a
-        ><a href="">Юридическим лицам</a>
+        ><a href="/docs/contract.docx" target="_blank" download>Установка</a
+        ><router-link to="/jobs">Вакансии</router-link
+        ><router-link to="/organization">Юридическим лицам</router-link>
         <section class="catalog-list" v-show="catalogShow">
           <div
             class="list-item"
@@ -111,14 +202,36 @@
     <footer class="footer-wrapper">
       <div class="footer-top">
         <img src="/img/logo_akva.jpg" alt="" class="footer-logo" />
-        <a href="">Связаться с нами</a>
-        <a href="">Заказать обратный звонок</a>
-        <a href="">Публичная оферта</a>
-        <router-link to="/policy" href=""
-          >Политика конфеденциальности</router-link
+        <router-link class="mobile-only" to="/sales">Акции</router-link>
+        <router-link class="mobile-only" to="/delivery"
+          >Доставка и самовывоз</router-link
+        >
+        <a
+          class="mobile-only"
+          href="/docs/contract.docx"
+          target="_blank"
+          download
+          >Установка</a
+        >
+        <router-link class="mobile-only" to="/jobs" href=""
+          >Вакансии</router-link
+        >
+        <router-link class="mobile-only" to="/organization" href=""
+          >Юридическим лицам</router-link
+        >
+        <router-link to="/contacts">Связаться с нами</router-link>
+        <a href="tel:88002348808">Звонок</a>
+        <a class="mobile-only" href="/docs/public.docx" target="_blank" download
+          >Публичная оферта</a
+        >
+        <a
+          class="mobile-only"
+          href="/docs/privacy.docx"
+          target="_blank"
+          download
+          >Политика конфиденциальности</a
         >
       </div>
-      <!-- <div class="footer-bottom">2021 &copy; АКВА</div> -->
     </footer>
   </div>
 </template>
@@ -130,17 +243,20 @@ export default {
     return {
       categories: [],
       searchResults: [],
+      mobileCatalogue: [],
       catalogShow: false,
       cartShow: false,
+      mobileNavShow: false,
+      mobileSearch: "",
     };
   },
   computed: {
     getUsername() {
       const user = this.$store.state.user;
       if (user.isLogged) {
-        console.log(user.username, user.name)
+        console.log(user.username, user.name);
         if (user.name != undefined) {
-          return user.name
+          return user.name;
         }
         if (user.username != undefined) {
           return user.username;
@@ -148,8 +264,8 @@ export default {
         return false;
       }
 
-      return false
-    }
+      return false;
+    },
   },
   methods: {
     getCategories() {
@@ -159,6 +275,9 @@ export default {
           this.prepareCategories(data);
           this.$store.commit("setCategories", data);
         });
+    },
+    openMobileCategory(data) {
+      if (data.length > 0) this.mobileCatalogue = data;
     },
     searchProducts(string) {
       fetch(
@@ -173,7 +292,8 @@ export default {
           .filter((item) => item[link] === id)
           .map((item) => ({ ...item, children: nest(items, item.id) }));
       this.categories = nest(list);
-      console.log(nest(list));
+      this.mobileCatalogue = [...nest(list)];
+      return nest(list);
     },
   },
   mounted() {
@@ -211,6 +331,10 @@ export default {
   overflow-y: scroll;
   border-radius: 16px;
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.14);
+
+  @media screen and (max-width: 1000px) {
+    display: none;
+  }
 
   &::-webkit-scrollbar {
     background: transparent;
@@ -268,6 +392,9 @@ export default {
   width: 100%;
   background-color: #cdd9e9;
   position: relative;
+  @media screen and (max-width: 1000px) {
+    padding: 12px 8px;
+  }
 }
 
 .header-top-right {
@@ -275,6 +402,12 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 16px;
+
+  @media screen and (max-width: 1000px) {
+    & *:not(#login-button) {
+      display: none;
+    }
+  }
 }
 
 .header-login-form {
@@ -317,6 +450,10 @@ export default {
   align-items: center;
   justify-content: space-between;
   position: relative;
+
+  @media screen and (max-width: 1000px) {
+    display: none;
+  }
 }
 
 .cart {
@@ -334,6 +471,11 @@ export default {
   padding: 32px;
   gap: 16px;
 
+  &.mobile {
+    width: 90vw;
+    padding: 16px;
+  }
+
   .cart-item {
     display: flex;
     align-items: center;
@@ -348,6 +490,7 @@ export default {
     .quantity {
       background-color: #ebebeb;
       padding: 8px;
+      white-space: nowrap;
     }
   }
 }
@@ -361,6 +504,9 @@ export default {
   justify-content: flex-start;
   gap: 64px;
   position: relative;
+  @media screen and (max-width: 1000px) {
+    display: none;
+  }
 }
 
 .header-nav a {
@@ -381,6 +527,10 @@ export default {
   justify-content: center;
   gap: 8px;
   position: relative;
+
+  &-fluid {
+    width: 100%;
+  }
 }
 
 .header-search {
@@ -416,6 +566,53 @@ export default {
   height: 24px;
 }
 
+.mobile-nav-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #fff;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex-direction: column;
+
+  .catalogue {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    max-height: 70vh;
+    overflow-y: scroll;
+
+    .item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+
+      span {
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      img {
+        height: 64px;
+      }
+    }
+  }
+
+  .close {
+    padding: 8px 16px;
+    background-color: #ebebeb;
+    margin: 16px;
+    border-radius: 16px;
+  }
+}
+
 .header-phone a {
   font-weight: 700;
   font-size: 24px;
@@ -449,6 +646,12 @@ export default {
   flex-direction: column;
   padding: 8px 40px;
   gap: 8px;
+
+  @media screen and (max-width: 1000px) {
+    padding: 8px;
+    flex-direction: row;
+    align-items: flex-end;
+  }
 }
 
 .catalog-list {
@@ -514,8 +717,35 @@ export default {
   color: #fff;
 }
 
+.menu-mobile {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 16px;
+  position: relative;
+
+  img:not(.header-logo) {
+    height: 32px;
+    filter: invert(47%) sepia(79%) saturate(5504%) hue-rotate(206deg)
+      brightness(100%) contrast(93%);
+  }
+
+  .menu-button {
+    filter: invert(47%) sepia(79%) saturate(5504%) hue-rotate(206deg)
+      brightness(100%) contrast(93%);
+  }
+  @media screen and (max-width: 1000px) {
+    display: flex;
+  }
+}
+
 .footer-logo {
   height: 8vh;
+  @media screen and (max-width: 1000px) {
+    height: auto;
+    width: 100%;
+  }
 }
 
 .footer-top a {
@@ -525,10 +755,45 @@ export default {
   background-color: #2075f5;
   padding: 8px 16px;
   border-radius: 8px;
+
+  @media screen and (max-width: 1000px) {
+    font-size: 14px;
+    text-align: center;
+  }
 }
 
 .footer-top a:hover {
   background-color: #1d62ca;
+}
+
+.footer-mobile {
+  display: none;
+  @media screen and (max-width: 1000px) {
+    display: flex;
+  }
+  flex-direction: column;
+  align-items: flex-start;
+  width: 50%;
+
+  a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #f5f5f5;
+    background-color: #2075f5;
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    width: 100%;
+
+    @media screen and (max-width: 1000px) {
+      font-size: 14px;
+      text-align: center;
+    }
+
+    &:hover {
+      background-color: #1d62ca;
+    }
+  }
 }
 
 .footer-top {
@@ -536,5 +801,23 @@ export default {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  .mobile-only {
+    display: none;
+  }
+
+  @media screen and (max-width: 1000px) {
+    flex-direction: column;
+    align-items: flex-end;
+
+    .mobile-only {
+      display: inline;
+    }
+
+    & a {
+      margin: 8px 0;
+      width: 100%;
+    }
+  }
 }
 </style>

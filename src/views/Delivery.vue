@@ -28,11 +28,13 @@
       самовывоза, находящемся по адресу 3-й м-н, Заозёрный район, Курган.
     </p>
     <h1>Режим работы:</h1>
-    <p>ПН-ПТ 9:00-19:00</p>
-    <p>СБ 9:00-18:00</p>
-    <p>ВС 9:00-16:00</p>
+    <ul>
+      <li>ПН-ПТ 9:00-19:00</li>
+      <li>СБ 9:00-18:00</li>
+      <li>ВС 9:00-16:00</li>
+    </ul>
     <h1>Телефон:</h1>
-    <p>8 (800) 234-88-08</p>
+    <a href="tel:88002348808">8 (800) 234-88-08</a>
     <h1>Оплачиваемая доставка</h1>
     <p>
       Если сумма бесплатной доставки не достигнута, доставка товаров
@@ -46,14 +48,24 @@
   min-height: 90vh;
   width: 100%;
   padding: 32px 40px;
+  background-color: #fff;
+
+  @media screen and (max-width: 1000px) {
+    padding: 16px 32px;
+  }
 }
 
 h1 {
   margin-bottom: 8px;
+  color: #2075f5;
 }
 
-p {
+p,
+li,
+a {
   font-size: 24px;
   margin-bottom: 16px;
+  text-decoration: none;
+  list-style-type: square;
 }
 </style>
