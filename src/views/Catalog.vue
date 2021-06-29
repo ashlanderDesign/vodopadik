@@ -1,6 +1,6 @@
 <template>
   <main class="wrapper">
-    <aside class="filters">
+    <aside class="filters" v-if="isFiltersAvailable">
       <span class="title">Фильтры</span>
       <div class="filters-row-title">Цена</div>
       <div class="filters-row">
@@ -14,11 +14,33 @@
         <span class="button-label">Применить</span>
       </button>
     </aside>
+    <div class="mobile-filters" v-show="showMobileFilters">
+      <button
+        class="button button-large button-secondary close"
+        @click="showMobileFilters = false"
+      >
+        <span class="button-label">Закрыть</span>
+      </button>
+      <span class="title">Фильтры</span>
+      <div class="filters-row-title">Цена</div>
+      <div class="filters-row">
+        <input v-model="filters.priceFrom" type="number" placeholder="От" />
+        <input v-model="filters.priceTo" type="number" placeholder="До" />
+      </div>
+      <button
+        class="button button-large button-block button-primary"
+        @click="getFiltered(categoryId)"
+      >
+        <span class="button-label">Применить</span>
+      </button>
+    </div>
     <section class="cards">
       <div class="title">
         <h1>{{ categoryName }}</h1>
       </div>
       <button
+        v-if="isFiltersAvailable"
+        @click="showMobileFilters = true"
         class="button button-large button-block button-primary filters-button"
       >
         <div class="button-label">Фильтры</div>
@@ -58,6 +80,8 @@ export default {
       products: [],
       categoryId: null,
       categoryName: "",
+      isFiltersAvailable: true,
+      showMobileFilters: false,
       filters: {
         priceFrom: "",
         priceTo: "",
@@ -75,6 +99,13 @@ export default {
     },
     getProductsAll() {
       fetch("https://santechnika-aqua45.ru/web/api/products")
+        .then((res) => res.json())
+        .then((data) => (this.products = data));
+    },
+    getProductsBySearchline(search) {
+      fetch(
+        "https://santechnika-aqua45.ru/web/api/products/search?search=" + search
+      )
         .then((res) => res.json())
         .then((data) => (this.products = data));
     },
@@ -115,6 +146,7 @@ export default {
     if (query.id != undefined) {
       this.getCategoryName(query.id);
       this.categoryId = query.id;
+      this.isFiltersAvailable = true;
 
       if (query.priceFrom != undefined) {
         this.filters.priceFrom = query.priceFrom;
@@ -125,6 +157,10 @@ export default {
       } else {
         this.getProductsByCategory(query.id);
       }
+    } else if (query.search != undefined) {
+      this.categoryName = `Реультаты поиска "${query.search}"`;
+      this.getProductsBySearchline(query.search);
+      this.isFiltersAvailable = false;
     } else {
       this.categoryName = "Каталог";
       if (query.priceFrom != undefined) {
@@ -152,6 +188,69 @@ export default {
     padding: 32px 8px;
     justify-content: center;
     overflow: hidden;
+  }
+}
+
+.mobile-filters {
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 13px rgba(0, 0, 0, 0.14);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 90vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+
+  .close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .title {
+    font-weight: 600;
+    font-size: 24px;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .filters-row {
+    margin-bottom: 16px;
+  }
+
+  .filters-row-title {
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 18px;
+  }
+
+  input {
+    background-color: #ebebeb;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 16px 32px;
+    margin-bottom: 16px;
+    width: 100%;
+    outline: none;
+  }
+
+  a {
+    padding: 8px 4px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #000;
+
+    &:hover {
+      color: #2075f5;
+    }
   }
 }
 

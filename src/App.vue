@@ -16,7 +16,10 @@
           class="header-search"
           v-model="mobileSearch"
         />
-        <button class="button button-circle button-large button-primary">
+        <button
+          class="button button-circle button-large button-primary"
+          @click="searchMobile()"
+        >
           <img class="button-icon" src="/img/search_icon.svg" alt="" />
         </button>
       </div>
@@ -224,10 +227,7 @@
         <a href="/docs/public.docx" target="_blank" download
           >Публичная оферта</a
         >
-        <a
-          href="/docs/privacy.docx"
-          target="_blank"
-          download
+        <a href="/docs/privacy.docx" target="_blank" download
           >Политика конфиденциальности</a
         >
       </div>
@@ -274,6 +274,10 @@ export default {
           this.prepareCategories(data);
           this.$store.commit("setCategories", data);
         });
+    },
+    searchMobile() {
+      this.$router.push(`/catalog?search=${this.mobileSearch}`);
+      this.mobileNavShow = false;
     },
     openMobileCategory(data) {
       if (data.length > 0) this.mobileCatalogue = data;
