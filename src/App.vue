@@ -221,11 +221,10 @@
         >
         <router-link to="/contacts">Связаться с нами</router-link>
         <a href="tel:88002348808">Звонок</a>
-        <a class="mobile-only" href="/docs/public.docx" target="_blank" download
+        <a href="/docs/public.docx" target="_blank" download
           >Публичная оферта</a
         >
         <a
-          class="mobile-only"
           href="/docs/privacy.docx"
           target="_blank"
           download
