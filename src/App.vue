@@ -302,8 +302,12 @@ export default {
   mounted() {
     this.getCategories();
     const cart = localStorage.getItem("cart");
+    const user = localStorage.getItem("user");
     if (cart) {
       this.$store.commit("setCart", JSON.parse(cart));
+    }
+    if (user) {
+      this.$store.commit("setUser", JSON.parse(user));
     }
   },
 };

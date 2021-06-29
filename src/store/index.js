@@ -38,6 +38,7 @@ export default new Vuex.Store({
       context.user.name = payload.name;
       context.user.surname = payload.surname;
       context.user.phone = payload.phone;
+      localStorage.setItem('user', JSON.stringify(context.user))
     },
     logout(context) {
       context.user = {
@@ -45,6 +46,10 @@ export default new Vuex.Store({
         username: null,
         token: null
       }
+      localStorage.removeItem('user')
+    },
+    setUser(context, payload) {
+      context.user = payload;
     },
     removeFromCart(context, payload) {
       let index = context.cart.indexOf(payload);
