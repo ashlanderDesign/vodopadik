@@ -94,17 +94,20 @@
         <input type="checkbox" v-model="calcNeedDelivery" id="isDelivery" />
         <label for="isDelivery">Нужна доставка</label>
       </div>
+      <div class="delivery">
+        <input type="checkbox" v-model="calcNeedMaster" id="isMaster" />
+        <label for="isMaster">Нужен мастер для установки</label>
+      </div>
       <div class="calculations">
         <div class="row" v-show="installProducts.length > 0">
-          {{ installProducts.length }} товаров на общую сумму до
-          {{ totalOfRelated }} +
+          {{ installProducts.length }} товаров на общую сумму
+          {{ totalOfRelated }}
         </div>
-        <div class="row">
+        <div class="row" v-show="calcNeedMaster">
           499 ₽ (стоимость найма мастера по установке)
-          {{ calcNeedDelivery ? "+" : "" }}
         </div>
         <div class="row" v-show="calcNeedDelivery">
-          299 ₽ (стоимость доставки)
+          600 ₽ (стоимость доставки)
         </div>
       </div>
       <div class="divider"></div>
@@ -157,6 +160,7 @@ export default {
         warehouses: 0,
       },
       calcNeedDelivery: false,
+      calcNeedMaster: false,
       review: {
         body: "",
         create_date: new Date(),
@@ -259,12 +263,18 @@ export default {
       return parseFloat(total).toFixed(2);
     },
     totalInstall() {
-      const deliveryCost = 299;
+      const deliveryCost = 600;
       const masterCost = 499;
       const relatedTotal = this.totalOfRelated;
 
       if (relatedTotal != 0 && this.calcNeedDelivery) {
         return Number(deliveryCost) + Number(masterCost) + Number(relatedTotal);
+      }
+      if (relatedTotal != 0 && !this.calcNeedMaster && this.calcNeedDelivery) {
+        return Number(deliveryCost) + Number(relatedTotal);
+      }
+      if (relatedTotal != 0 && !this.calcNeedMaster && !this.calcNeedDelivery) {
+        return Number(relatedTotal);
       }
       if (relatedTotal != 0 && !this.calcNeedDelivery) {
         return Number(masterCost) + Number(relatedTotal);
@@ -272,8 +282,14 @@ export default {
       if (relatedTotal == 0 && this.calcNeedDelivery) {
         return Number(deliveryCost) + Number(masterCost);
       }
-      if (relatedTotal == 0 && !this.calcNeedDelivery) {
+      if (relatedTotal == 0 && this.calcNeedDelivery && !this.calcNeedMaster) {
+        return Number(deliveryCost);
+      }
+      if (relatedTotal == 0 && !this.calcNeedDelivery && this.calcNeedMaster) {
         return Number(masterCost);
+      }
+      if (relatedTotal == 0 && !this.calcNeedDelivery && !this.calcNeedMaster) {
+        return Number(0);
       }
       return Number(masterCost);
     },
