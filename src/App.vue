@@ -301,6 +301,10 @@ export default {
   },
   mounted() {
     this.getCategories();
+    const cart = localStorage.getItem("cart");
+    if (cart) {
+      this.$store.commit("setCart", JSON.parse(cart));
+    }
   },
 };
 </script>

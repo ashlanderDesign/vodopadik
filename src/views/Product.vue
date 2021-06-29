@@ -267,7 +267,7 @@ export default {
       const masterCost = 499;
       const relatedTotal = this.totalOfRelated;
 
-      if (relatedTotal != 0 && this.calcNeedDelivery) {
+      if (relatedTotal != 0 && this.calcNeedDelivery && this.calcNeedMaster) {
         return Number(deliveryCost) + Number(masterCost) + Number(relatedTotal);
       }
       if (relatedTotal != 0 && !this.calcNeedMaster && this.calcNeedDelivery) {
@@ -276,10 +276,10 @@ export default {
       if (relatedTotal != 0 && !this.calcNeedMaster && !this.calcNeedDelivery) {
         return Number(relatedTotal);
       }
-      if (relatedTotal != 0 && !this.calcNeedDelivery) {
+      if (relatedTotal != 0 && !this.calcNeedDelivery && this.calcNeedMaster) {
         return Number(masterCost) + Number(relatedTotal);
       }
-      if (relatedTotal == 0 && this.calcNeedDelivery) {
+      if (relatedTotal == 0 && this.calcNeedDelivery && this.calcNeedMaster) {
         return Number(deliveryCost) + Number(masterCost);
       }
       if (relatedTotal == 0 && this.calcNeedDelivery && !this.calcNeedMaster) {

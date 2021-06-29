@@ -23,6 +23,7 @@ export default new Vuex.Store({
     },
     clearCart(context) {
       context.cart = []
+      localStorage.removeItem('cart');
     },
     edit(context, payload) {
       context.user.name = payload.name;
@@ -52,6 +53,10 @@ export default new Vuex.Store({
       } else {
         context.cart.splice(index, 1);
       }
+      localStorage.setItem('cart', JSON.stringify(context.cart));
+    },
+    setCart(context, payload) {
+      context.cart = payload;
     },
     addToCart(context, payload) {
       const filtered = context.cart.filter((x) => x.id === payload.id);
@@ -63,6 +68,7 @@ export default new Vuex.Store({
         context.cart[index].quantity += 1
         context.cart[index].total = context.cart[index].quantity * context.cart[index].price
       }
+      localStorage.setItem('cart', JSON.stringify(context.cart));
     }
   },
   actions: {},
